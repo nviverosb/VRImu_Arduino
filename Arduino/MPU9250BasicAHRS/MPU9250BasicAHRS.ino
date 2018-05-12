@@ -29,6 +29,11 @@
 */
 #include <SPI.h>
 #include <Wire.h>
+#include <SoftwareSerial.h>
+
+SoftwareSerial Serial_2 (2, 3);   // Crea nueva conexion- Pin2(RX) a TX y Pin3(TX) a RX
+String Mensaje;  // Variable de cadena de caracteres para almacenar el mensaje
+
 // See also MPU-9250 Register Map and Descriptions, Revision 4.0, RM-MPU-9250A-00, Rev. 1.4, 9/9/2013 for registers not listed in
 // above document; the MPU9250 and MPU9150 are virtually identical but the latter has a different register map
 //
@@ -263,7 +268,11 @@ void setup()
 {
   Wire.begin();
   //  TWBR = 12;  // 400 kbit/sec I2C speed
-  Serial.begin(57600);
+  Serial.begin(38400);   // Iniciamos el puerto que esta conectado al PC a 38400 Baudios
+  
+  //VARIABLES BLUETOOTH
+  Serial_2.begin(38400); // Iniciamos el puerto nuevo Serial_2 a 38400 Baudios
+  pinMode(13, 1); 
 
   // Set up the interrupt pin, its set as active high, push-pull
   pinMode(intPin, INPUT);
@@ -348,6 +357,10 @@ void setup()
     Serial.println(c, HEX);
     while (1) ; // Loop forever if communication doesn't happen
   }
+
+ 
+
+  
 }
 
 void loop()
@@ -407,28 +420,28 @@ void loop()
 
       if (SerialDebug) {
         // Print acceleration values in milligs!
-        Serial.print("X-acceleration: "); Serial.print(1000 * ax); Serial.print(" mg ");
-        Serial.print("Y-acceleration: "); Serial.print(1000 * ay); Serial.print(" mg ");
-        Serial.print("Z-acceleration: "); Serial.print(1000 * az); Serial.println(" mg ");
+        Serial_2.print("X-acceleration: "); Serial_2.print(1000 * ax); Serial_2.print(" mg ");
+        Serial_2.print("Y-acceleration: "); Serial_2.print(1000 * ay); Serial_2.print(" mg ");
+        Serial_2.print("Z-acceleration: "); Serial_2.print(1000 * az); Serial_2.println(" mg ");
 
         // Print gyro values in degree/sec
-        Serial.print("X-gyro rate: "); Serial.print(gx, 3); Serial.print(" degrees/sec ");
-        Serial.print("Y-gyro rate: "); Serial.print(gy, 3); Serial.print(" degrees/sec ");
-        Serial.print("Z-gyro rate: "); Serial.print(gz, 3); Serial.println(" degrees/sec");
+        Serial_2.print("X-gyro rate: "); Serial_2.print(gx, 3); Serial_2.print(" degrees/sec ");
+        Serial_2.print("Y-gyro rate: "); Serial_2.print(gy, 3); Serial_2.print(" degrees/sec ");
+        Serial_2.print("Z-gyro rate: "); Serial_2.print(gz, 3); Serial_2.println(" degrees/sec");
 
         // Print mag values in degree/sec
-        Serial.print("X-mag field: "); Serial.print(mx); Serial.print(" mG ");
-        Serial.print("Y-mag field: "); Serial.print(my); Serial.print(" mG ");
-        Serial.print("Z-mag field: "); Serial.print(mz); Serial.println(" mG");
+        Serial_2.print("X-mag field: "); Serial_2.print(mx); Serial_2.print(" mG ");
+        Serial_2.print("Y-mag field: "); Serial_2.print(my); Serial_2.print(" mG ");
+        Serial_2.print("Z-mag field: "); Serial_2.print(mz); Serial_2.println(" mG");
 
-//        tempCount = readTempData();  // Read the adc values
-//        temperature = ((float) tempCount) / 333.87 + 21.0; // Temperature in degrees Centigrade
-//        // Print temperature in degrees Centigrade
-//        Serial.print("Temperature is ");  Serial.print(temperature, 1);  Serial.println(" degrees C"); // Print T values to tenths of s degree C
+        //        tempCount = readTempData();  // Read the adc values
+        //        temperature = ((float) tempCount) / 333.87 + 21.0; // Temperature in degrees Centigrade
+        //        // Print temperature in degrees Centigrade
+        //        Serial.print("Temperature is ");  Serial.print(temperature, 1);  Serial.println(" degrees C"); // Print T values to tenths of s degree C
       }
 
-//      count = millis();
-//      digitalWrite(myLed, !digitalRead(myLed));  // toggle led
+      //      count = millis();
+      //      digitalWrite(myLed, !digitalRead(myLed));  // toggle led
     }
   }
   else {
@@ -438,20 +451,20 @@ void loop()
     if (delt_t > 30) { // update LCD once per half-second independent of read rate
 
       if (SerialDebug) {
-        Serial.print("ax = "); Serial.print((int)1000 * ax);
-        Serial.print(" ay = "); Serial.print((int)1000 * ay);
-        Serial.print(" az = "); Serial.print((int)1000 * az); Serial.println(" mg");
-        Serial.print("gx = "); Serial.print( gx, 2);
-        Serial.print(" gy = "); Serial.print( gy, 2);
-        Serial.print(" gz = "); Serial.print( gz, 2); Serial.println(" deg/s");
-        Serial.print("mx = "); Serial.print( (int)mx );
-        Serial.print(" my = "); Serial.print( (int)my );
-        Serial.print(" mz = "); Serial.print( (int)mz ); Serial.println(" mG");
+        Serial_2.print("ax = "); Serial_2.print((int)1000 * ax);
+        Serial_2.print(" ay = "); Serial_2.print((int)1000 * ay);
+        Serial_2.print(" az = "); Serial_2.print((int)1000 * az); Serial.println(" mg");
+        Serial_2.print("gx = "); Serial_2.print( gx, 2);
+        Serial_2.print(" gy = "); Serial_2.print( gy, 2);
+        Serial_2.print(" gz = "); Serial_2.print( gz, 2); Serial.println(" deg/s");
+        Serial_2.print("mx = "); Serial_2.print( (int)mx );
+        Serial_2.print(" my = "); Serial_2.print( (int)my );
+        Serial_2.print(" mz = "); Serial_2.print( (int)mz ); Serial.println(" mG");
 
-        Serial.print("q0 = "); Serial.print(q[0]);
-        Serial.print(" qx = "); Serial.print(q[1]);
-        Serial.print(" qy = "); Serial.print(q[2]);
-        Serial.print(" qz = "); Serial.println(q[3]);
+        Serial_2.print("q0 = "); Serial_2.print(q[0]);
+        Serial_2.print(" qx = "); Serial_2.print(q[1]);
+        Serial_2.print(" qy = "); Serial_2.print(q[2]);
+        Serial_2.print(" qz = "); Serial_2.println(q[3]);
       }
 
       // Define output variables from updated quaternion---these are Tait-Bryan angles, commonly used in aircraft orientation.
@@ -463,30 +476,30 @@ void loop()
       // Tait-Bryan angles as well as Euler angles are non-commutative; that is, the get the correct orientation the rotations must be
       // applied in the correct order which for this configuration is yaw, pitch, and then roll.
       // For more see http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles which has additional links.
-//      yaw   = atan2(2.0f * (q[1] * q[2] + q[0] * q[3]), q[0] * q[0] + q[1] * q[1] - q[2] * q[2] - q[3] * q[3]);
-//      pitch = -asin(2.0f * (q[1] * q[3] - q[0] * q[2]));
-//      roll  = atan2(2.0f * (q[0] * q[1] + q[2] * q[3]), q[0] * q[0] - q[1] * q[1] - q[2] * q[2] + q[3] * q[3]);
-//      pitch *= 180.0f / PI;
-//      yaw   *= 180.0f / PI;
-//      yaw   -= 13.8; // Declination at Danville, California is 13 degrees 48 minutes and 47 seconds on 2014-04-04
-//      roll  *= 180.0f / PI;
+      //      yaw   = atan2(2.0f * (q[1] * q[2] + q[0] * q[3]), q[0] * q[0] + q[1] * q[1] - q[2] * q[2] - q[3] * q[3]);
+      //      pitch = -asin(2.0f * (q[1] * q[3] - q[0] * q[2]));
+      //      roll  = atan2(2.0f * (q[0] * q[1] + q[2] * q[3]), q[0] * q[0] - q[1] * q[1] - q[2] * q[2] + q[3] * q[3]);
+      //      pitch *= 180.0f / PI;
+      //      yaw   *= 180.0f / PI;
+      //      yaw   -= 13.8; // Declination at Danville, California is 13 degrees 48 minutes and 47 seconds on 2014-04-04
+      //      roll  *= 180.0f / PI;
 
-//      if (SerialDebug) {
-//        Serial.print("Yaw, Pitch, Roll: ");
-//        Serial.print(yaw, 2);
-//        Serial.print(", ");
-//        Serial.print(pitch, 2);
-//        Serial.print(", ");
-//        Serial.println(roll, 2);
-//
-//        Serial.print("rate = "); Serial.print((float)sumCount / sum, 2); Serial.println(" Hz");
-//      }
+      //      if (SerialDebug) {
+      //        Serial.print("Yaw, Pitch, Roll: ");
+      //        Serial.print(yaw, 2);
+      //        Serial.print(", ");
+      //        Serial.print(pitch, 2);
+      //        Serial.print(", ");
+      //        Serial.println(roll, 2);
+      //
+      //        Serial.print("rate = "); Serial.print((float)sumCount / sum, 2); Serial.println(" Hz");
+      //      }
 
-//      Serial.println("rt: "); Serial.println((float) sumCount / sum, 2); Serial.println(" Hz");
-//
-//      count = millis();
-//      sumCount = 0;
-//      sum = 0;
+      //      Serial.println("rt: "); Serial.println((float) sumCount / sum, 2); Serial.println(" Hz");
+      //
+      //      count = millis();
+      //      sumCount = 0;
+      //      sum = 0;
     }
   }
 
