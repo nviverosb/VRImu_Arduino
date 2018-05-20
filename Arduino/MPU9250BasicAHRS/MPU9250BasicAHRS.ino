@@ -31,6 +31,9 @@
 #include <Wire.h>
 #include <SoftwareSerial.h>
 
+SoftwareSerial Serial_2 (2, 3);   // Crea nueva conexion- Pin2(RX) a TX y Pin3(TX) a RX
+String Mensaje;  // Variable de cadena de caracteres para almacenar el mensaje
+
 // See also MPU-9250 Register Map and Descriptions, Revision 4.0, RM-MPU-9250A-00, Rev. 1.4, 9/9/2013 for registers not listed in
 // above document; the MPU9250 and MPU9150 are virtually identical but the latter has a different register map
 //
@@ -260,7 +263,6 @@ float ax, ay, az, gx, gy, gz, mx, my, mz; // variables to hold latest sensor dat
 float q[4] = {1.0f, 0.0f, 0.0f, 0.0f};    // vector to hold quaternion
 float eInt[3] = {0.0f, 0.0f, 0.0f};       // vector to hold integral error for Mahony method
 
-SoftwareSerial Serial_2 (2, 3);   // Crea nueva conexion- Pin2(RX) a TX y Pin3(TX) a RX
 
 void setup()
 {
