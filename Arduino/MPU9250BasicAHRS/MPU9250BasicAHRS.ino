@@ -279,77 +279,25 @@ void setup()
   digitalWrite(intPin, LOW);
   pinMode(myLed, OUTPUT);
   digitalWrite(myLed, HIGH);
-//  Serial.println("MPU9250");
-//  Serial.println("9-DOF 16-bit");
-//  Serial.println("motion sensor");
-//  Serial.println("60 ug LSB");
-//  delay(1000);
-  // Read the WHO_AM_I register, this is a good test of communication
+  
   byte c = readByte(MPU9250_ADDRESS, WHO_AM_I_MPU9250);  // Read WHO_AM_I register for MPU-9250
-//  Serial.print("MPU9250 "); Serial.print("I AM "); Serial.print(c, HEX); Serial.print(" I should be "); Serial.println(0x71, HEX);
-//  Serial.println("MPU9250");
-//  Serial.println("I AM");
-//  Serial.println(c, HEX);
-//  Serial.println("I Should Be");
-//  Serial.println(0x71, HEX);
-//  delay(1000);
 
   if (c == 0x73) // WHO_AM_I should always be 0x68
   {
-//    Serial.println("MPU9250 is online...");
 
     MPU9250SelfTest(SelfTest); // Start by performing self test and reporting values
-//    Serial.print("x-axis self test: acceleration trim within : "); Serial.print(SelfTest[0], 1); Serial.println("% of factory value");
-//    Serial.print("y-axis self test: acceleration trim within : "); Serial.print(SelfTest[1], 1); Serial.println("% of factory value");
-//    Serial.print("z-axis self test: acceleration trim within : "); Serial.print(SelfTest[2], 1); Serial.println("% of factory value");
-//    Serial.print("x-axis self test: gyration trim within : "); Serial.print(SelfTest[3], 1); Serial.println("% of factory value");
-//    Serial.print("y-axis self test: gyration trim within : "); Serial.print(SelfTest[4], 1); Serial.println("% of factory value");
-//    Serial.print("z-axis self test: gyration trim within : "); Serial.print(SelfTest[5], 1); Serial.println("% of factory value");
 
     calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
-//    Serial.println("MPU9250 bias");
-//    Serial.println(" x   y   z  ");
-//    Serial.println((int)(1000 * accelBias[0]));
-//    Serial.println((int)(1000 * accelBias[1]));
-//    Serial.println((int)(1000 * accelBias[2]));
-//    Serial.println("mg");
-//    Serial.println(gyroBias[0], 1);
-//    Serial.println(gyroBias[1], 1);
-//    Serial.println(gyroBias[2], 1);
-//    Serial.println("o/s");
 
 //    delay(1000);
 
     initMPU9250();
-//    Serial.println("MPU9250 initialized for active data mode...."); // Initialize device for active mode read of acclerometer, gyroscope, and temperature
-
+    
     // Read the WHO_AM_I register of the magnetometer, this is a good test of communication
     byte d = readByte(AK8963_ADDRESS, WHO_AM_I_AK8963);  // Read WHO_AM_I register for AK8963
-//    Serial.print("AK8963 "); Serial.print("I AM "); Serial.print(d, HEX); Serial.print(" I should be "); Serial.println(0x48, HEX);
-//    Serial.println("AK8963");
-//    Serial.println("I AM");
-//    Serial.println(d, HEX);
-//    Serial.println("I Should Be");
-//    Serial.println(0x48, HEX);
-//    delay(1000);
 
     // Get magnetometer calibration from AK8963 ROM
     initAK8963(magCalibration); //Serial.println("AK8963 initialized for active data mode...."); // Initialize device for active mode read of magnetometer
-
-    if (SerialDebug) {
-      //  Serial.println("Calibration values: ");
-//      Serial.print("X-Axis sensitivity adjustment value "); Serial.println(magCalibration[0], 2);
-//      Serial.print("Y-Axis sensitivity adjustment value "); Serial.println(magCalibration[1], 2);
-//      Serial.print("Z-Axis sensitivity adjustment value "); Serial.println(magCalibration[2], 2);
-    }
-//    Serial.println("AK8963");
-//    Serial.println("ASAX ");
-//    Serial.println(magCalibration[0], 2);
-//    Serial.println("ASAY ");
-//    Serial.println(magCalibration[1], 2);
-//    Serial.println("ASAZ ");
-//    Serial.println(magCalibration[2], 2);
-//    delay(1000);
   }
   else
   {
@@ -389,9 +337,9 @@ void loop()
 //    magbias[1] = +120.;  // User environmental x-axis correction in milliGauss
 //    magbias[2] = +125.;  // User environmental x-axis correction in milliGauss
 
-    magbias[0] = 0.;  
-    magbias[1] = 0.;  
-    magbias[2] = 0.;  
+//    magbias[0] = 0.;  
+//    magbias[1] = 0.;  
+//    magbias[2] = 0.;  
 
     // Calculate the magnetometer values in milliGauss
     // Include factory calibration per data sheet and user environmental corrections
@@ -425,37 +373,14 @@ void loop()
       if (SerialDebug) {
 
         String text = "INICIO";
-        text = text + String((int)10 * ax) + " " + String((int)10 * ay) + " " + String((int)10 * az);
-        text = text + " " + String(gx) + " " + String(gy) + " " + String(gz);
-        text = text + " " + String(mx) + " " + String(my) + " " + String(mz);
+        text = text + String(ax*10) + " " + String(ay*10) + " " + String(-az*10);
+        text = text + " " + String(gx * PI / 180.0f) + " " + String(gy * PI / 180.0f) + " " + String(gz * PI / 180.0f);
+        text = text + " " + String(mx/10) + " " + String(my/10) + " " + String(mz/10);
         text = text + "FINAL";
         
         Serial_2.println(text);
-
-//        delay(50);
-        // Print acceleration values in milligs!
-//        Serial_2.print("X-acceleration: "); Serial_2.print(1000 * ax); Serial_2.print(" mg ");
-//        Serial_2.print("Y-acceleration: "); Serial_2.print(1000 * ay); Serial_2.print(" mg ");
-//        Serial_2.print("Z-acceleration: "); Serial_2.print(1000 * az); Serial_2.println(" mg ");
-//
-//        // Print gyro values in degree/sec
-//        Serial_2.print("X-gyro rate: "); Serial_2.print(gx, 3); Serial_2.print(" degrees/sec ");
-//        Serial_2.print("Y-gyro rate: "); Serial_2.print(gy, 3); Serial_2.print(" degrees/sec ");
-//        Serial_2.print("Z-gyro rate: "); Serial_2.print(gz, 3); Serial_2.println(" degrees/sec");
-//
-//        // Print mag values in degree/sec
-//        Serial_2.print("X-mag field: "); Serial_2.print(mx); Serial_2.print(" mG ");
-//        Serial_2.print("Y-mag field: "); Serial_2.print(my); Serial_2.print(" mG ");
-//        Serial_2.print("Z-mag field: "); Serial_2.print(mz); Serial_2.println(" mG");
-
-        //        tempCount = readTempData();  // Read the adc values
-        //        temperature = ((float) tempCount) / 333.87 + 21.0; // Temperature in degrees Centigrade
-        //        // Print temperature in degrees Centigrade
-        //        Serial.print("Temperature is ");  Serial.print(temperature, 1);  Serial.println(" degrees C"); // Print T values to tenths of s degree C
+        Serial.println(text);
       }
-
-      //      count = millis();
-      //      digitalWrite(myLed, !digitalRead(myLed));  // toggle led
     }
   }
   else {
@@ -466,66 +391,19 @@ void loop()
 
       if (SerialDebug) {
         String text = "INICIO";
-        text = text + String((int)10 * ax) + " " + String((int)10 * ay) + " " + String((int)10 * az);
-        text = text + " " + String(gx) + " " + String(gy) + " " + String(gz);
-        text = text + " " + String(mx) + " " + String(my) + " " + String(mz);
+        text = text + String(ax*10) + " " + String(ay*10) + " " + String(-az*10);
+        text = text + " " + String(gx * PI / 180.0f) + " " + String(gy * PI / 180.0f) + " " + String(gz * PI / 180.0f);
+        text = text + " " + String(mx/10) + " " + String(my/10) + " " + String(mz/10);
         text = text + "FINAL";
+
+        String texto2 = String(q[0]) + " " + String(q[1]) + " "  + String(q[2]) + " " + String(q[3]);
+        Serial.println(texto2);
         
         Serial_2.println(text);
-
-//        delay(50);
-//        Serial.print((int)1000 * ax , " " , (int)1000 * ay , " " , (int)1000 * az);
-//        Serial_2.print(" ay = "); Serial_2.print((int)1000 * ay);
-//        Serial_2.print(" az = "); Serial_2.print((int)1000 * az); Serial.println(" mg");
-//        Serial_2.print("gx = "); Serial_2.print( gx, 2);
-//        Serial_2.print(" gy = "); Serial_2.print( gy, 2);
-//        Serial_2.print(" gz = "); Serial_2.print( gz, 2); Serial.println(" deg/s");
-//        Serial_2.print("mx = "); Serial_2.print( (int)mx );
-//        Serial_2.print(" my = "); Serial_2.print( (int)my );
-//        Serial_2.print(" mz = "); Serial_2.print( (int)mz ); Serial.println(" mG");
-//
-//        Serial_2.print("q0 = "); Serial_2.print(q[0]);
-//        Serial_2.print(" qx = "); Serial_2.print(q[1]);
-//        Serial_2.print(" qy = "); Serial_2.print(q[2]);
-//        Serial_2.print(" qz = "); Serial_2.println(q[3]);
+        Serial.println(text);
       }
-
-      // Define output variables from updated quaternion---these are Tait-Bryan angles, commonly used in aircraft orientation.
-      // In this coordinate system, the positive z-axis is down toward Earth.
-      // Yaw is the angle between Sensor x-axis and Earth magnetic North (or true North if corrected for local declination, looking down on the sensor positive yaw is counterclockwise.
-      // Pitch is angle between sensor x-axis and Earth ground plane, toward the Earth is positive, up toward the sky is negative.
-      // Roll is angle between sensor y-axis and Earth ground plane, y-axis up is positive roll.
-      // These arise from the definition of the homogeneous rotation matrix constructed from quaternions.
-      // Tait-Bryan angles as well as Euler angles are non-commutative; that is, the get the correct orientation the rotations must be
-      // applied in the correct order which for this configuration is yaw, pitch, and then roll.
-      // For more see http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles which has additional links.
-      //      yaw   = atan2(2.0f * (q[1] * q[2] + q[0] * q[3]), q[0] * q[0] + q[1] * q[1] - q[2] * q[2] - q[3] * q[3]);
-      //      pitch = -asin(2.0f * (q[1] * q[3] - q[0] * q[2]));
-      //      roll  = atan2(2.0f * (q[0] * q[1] + q[2] * q[3]), q[0] * q[0] - q[1] * q[1] - q[2] * q[2] + q[3] * q[3]);
-      //      pitch *= 180.0f / PI;
-      //      yaw   *= 180.0f / PI;
-      //      yaw   -= 13.8; // Declination at Danville, California is 13 degrees 48 minutes and 47 seconds on 2014-04-04
-      //      roll  *= 180.0f / PI;
-
-      //      if (SerialDebug) {
-      //        Serial.print("Yaw, Pitch, Roll: ");
-      //        Serial.print(yaw, 2);
-      //        Serial.print(", ");
-      //        Serial.print(pitch, 2);
-      //        Serial.print(", ");
-      //        Serial.println(roll, 2);
-      //
-      //        Serial.print("rate = "); Serial.print((float)sumCount / sum, 2); Serial.println(" Hz");
-      //      }
-
-      //      Serial.println("rt: "); Serial.println((float) sumCount / sum, 2); Serial.println(" Hz");
-      //
-      //      count = millis();
-      //      sumCount = 0;
-      //      sum = 0;
     }
   }
-
 }
 
 //===================================================================================================================
